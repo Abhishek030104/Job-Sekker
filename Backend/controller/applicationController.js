@@ -13,31 +13,34 @@ cloudinary.config({
 // create  Application
 export const PostApplicationController = async (req, res) => {
   try {
-    if (!req.files || Object.keys(req.files).length === 0) {
-      return res.json({
-        success: false,
-        message: 'Resume Required',
-      })
-    }
-    const { resume } = req.files
-    const allowedformats = ['image/png', 'image/jpg', 'image/webp']
-    if (!allowedformats.includes(resume.mimetype)) {
-      return res.json({
-        success: false,
-        message: 'Resume must be in png,jpg or webp format',
-      })
-    }
-    const cloudinaryResponse = await cloudinary.uploader.upload(
-      resume.tempFilePath,
-    )
-    if (!cloudinaryResponse || cloudinaryResponse.error) {
-      console.log('cloudnary error')
-      return res.json({
-        success: false,
-        message: 'Error in Cloudnary',
-      })
-    }
-    const { name, email, coverLetter, phone, address, jobId } = req.body
+    // if (!req.files || Object.keys(req.files).length === 0) {
+    //   return res.json({
+    //     success: false,
+    //     message: 'Resume Required',
+    //   })
+    // }
+    // const { resume } = req.files
+    // const allowedMimeTypes = ['image/png', 'image/jpeg', 'image/webp']
+
+    // if (!allowedMimeTypes.includes(resume.mimetype)) {
+    //   return res.json({
+    //     success: false,
+    //     message: 'Resume must be in PNG, JPEG, or WEBP format',
+    //   })
+    // }
+    // const cloudinaryResponse = await cloudinary.uploader.upload(
+    //   resume.tempFilePath,
+    // )
+    // if (!cloudinaryResponse || cloudinaryResponse.error) {
+    //   console.log('cloudnary error')
+    //   return res.json({
+    //     success: false,
+    //     message: 'Error in Cloudnary',
+    //   })
+    // }
+    const { name, email, coverLetter, phone, address, jobId, resume } = req.body
+    console.log(resume)
+
     switch (true) {
       case !name:
         return res.json({ success: false, message: 'Name is Required' })
@@ -51,6 +54,8 @@ export const PostApplicationController = async (req, res) => {
         return res.json({ success: false, message: 'address is Required' })
       case !jobId:
         return res.json({ success: false, message: 'Job Not Found' })
+      case !resume:
+        return res.json({ success: false, message: 'Resume is Required' })
     }
 
     const job = await jobModel.findOne({ _id: jobId })
@@ -76,12 +81,20 @@ export const PostApplicationController = async (req, res) => {
       address,
       applicantID,
       employerID,
-      resume: {
-        public_id: cloudinaryResponse.public_id,
-        url: cloudinaryResponse.secure_url,
-      },
+      resume,
+
+      // resume: {
+      //   public_id: cloudinaryResponse.public_id,
+      //   url: cloudinaryResponse.secure_url,
+      // },
     }).save()
 
+    if (!application) {
+      res.json({
+        success: false,
+        message: 'Error Application Apply',
+      })
+    }
     res.json({
       success: true,
       message: 'Application Applied Successfully',
@@ -102,7 +115,13 @@ export const getAllApllicationOfEmployeerController = async (req, res) => {
     const applications = await applicationModel.find({
       'employerID.user': req.user._id,
     })
-    res.json({
+    if (!applications) {
+      return res.json({
+        success: false,
+        message: 'Error in geting Application',
+      })
+    }
+    return res.json({
       success: true,
       message: 'All Application Fetched Successfully',
       applications,
@@ -122,8 +141,15 @@ export const GetAllApplicationofjobSeekerController = async (req, res) => {
     const applications = await applicationModel.find({
       'applicantID.user': req.user._id,
     })
-    res.json({
-      success: false,
+    if (!applications) {
+      return res.json({
+        success: false,
+        message: 'Application Not Found',
+      })
+    }
+    // console.log(applications)
+    return res.json({
+      success: true,
       message: 'Succesffuly Fetched All Application',
       applications,
     })
@@ -151,7 +177,7 @@ export const DeleteApplicationController = async (req, res) => {
       })
     }
     await application.deleteOne()
-    res.json({
+    return res.json({
       success: true,
       message: 'Application Deleted SuccessFully',
     })

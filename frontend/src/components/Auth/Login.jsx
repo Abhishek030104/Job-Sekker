@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { MdOutlineMailOutline } from 'react-icons/md'
 import { RiLock2Fill } from 'react-icons/ri'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
@@ -29,7 +29,7 @@ export const Login = () => {
 
       if (data?.success) {
         toast.success('Login Successfull')
-        alert('Login Successfull')
+
         setAuth({
           ...auth,
           user: data?.user,
@@ -38,13 +38,17 @@ export const Login = () => {
         localStorage.setItem('auth', JSON.stringify(data))
         navigate('/')
       } else {
-        alert(data?.message)
+        toast.error(data?.message)
       }
     } catch (error) {
-      alert('Error')
       toast.error('Error In Login')
     }
   }
+  useEffect(() => {
+    if (auth?.token) {
+      navigate('/')
+    }
+  })
   return (
     <>
       <section className="authPage">

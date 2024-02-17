@@ -56,7 +56,7 @@ export const Navbar = () => {
                 <Link to={'/job/post'}>POST NEW JOB</Link>
               </li>
               <li>
-                <Link to={'/application/myapplication'}>VIEW YOUR JOB</Link>
+                <Link to={'/job/me'}>VIEW YOUR JOB</Link>
               </li>
             </>
           ) : (

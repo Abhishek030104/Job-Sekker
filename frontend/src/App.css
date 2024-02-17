@@ -71,7 +71,13 @@ p {
     font-size: 1.15rem;
   }
 }
-
+.loading-container {
+  display: flex;
+  font-size: larger;
+  justify-content: center; /* center horizontally */
+  align-items: center; /* center vertically */
+  height: 60vh; /* full viewport height */
+}
 .authPage {
   display: flex;
   min-width: 1500px;

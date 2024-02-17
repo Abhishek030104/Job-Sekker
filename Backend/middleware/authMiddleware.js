@@ -1,18 +1,24 @@
 import JWT from 'jsonwebtoken'
 import userModel from '../model/userModel.js'
-import applicationModel from '../model/applicationModel.js'
+// import applicationModel from '../model/applicationModel.js'
+import dotenv from 'dotenv'
+dotenv.config()
 
 export const requireSignIn = async (req, res, next) => {
   try {
-    const { token } = req.cookies
-    if (!token) {
-      return res.json({ success: false, message: 'unAuthorized Access' })
-    }
-    const decode = JWT.verify(req.cookies.token, process.env.JWT_SECRET_KEY)
-    // const decode = JWT.verify(req.headers.authorization, process.env.JWT_SECRET_KEY)
+    const decode = JWT.verify(
+      req.headers.authorization,
+      process.env.JWT_SECRET_KEY,
+    )
     req.user = decode
+    // const decode = JWT.verify(req.headers.authorization, process.env.JWT_SECRET_KEY)
+
     next()
   } catch (error) {
+    res.json({
+      success: false,
+      message: 'UnAuthorized Access',
+    })
     console.log(error)
   }
 }

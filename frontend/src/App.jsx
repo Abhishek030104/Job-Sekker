@@ -14,6 +14,7 @@ import { Navbar } from './components/Layout/Navbar'
 import { Footer } from './components/Layout/Footer'
 
 import { Toaster } from 'react-hot-toast'
+import { MyJob } from './components/Job/MyJob'
 
 export const App = () => {
   return (
@@ -27,7 +28,7 @@ export const App = () => {
           <Route path="/job/getall" element={<Job />} />
           <Route path="job/:id" element={<JobDetails />} />
           <Route path="/job/post" element={<PostJob />} />
-
+          <Route path="/job/me" element={<MyJob />} />
           <Route path="/application/:id" element={<Application />} />
           <Route
             path="/application/myapplication"
@@ -37,7 +38,7 @@ export const App = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
-        <Toaster />
+        <Toaster position="top-center" reverseOrder={false} />
       </BrowserRouter>
     </>
   )

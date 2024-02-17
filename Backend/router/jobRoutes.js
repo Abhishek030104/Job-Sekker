@@ -3,6 +3,7 @@ import {
   DeleteJobController,
   GetAllJobController,
   GetMyJobCOntroller,
+  GetSingleJob,
   PostJobController,
   UpdateJobController,
 } from '../controller/jobController.js'
@@ -21,6 +22,9 @@ router.get('/getmyjob', requireSignIn, isEmployer, GetMyJobCOntroller)
 
 // update job
 router.put('/update-job/:jid', requireSignIn, isEmployer, UpdateJobController)
+
+// get job details
+router.get('/:id', requireSignIn, GetSingleJob)
 
 //delete job
 router.delete(

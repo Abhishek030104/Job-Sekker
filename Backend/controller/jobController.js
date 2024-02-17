@@ -63,6 +63,12 @@ export const PostJobController = async (req, res) => {
       postedBy: req.user._id,
     }).save()
 
+    if (!job) {
+      res.json({
+        success: false,
+        message: 'Try Again!',
+      })
+    }
     return res.json({
       success: true,
       message: 'Job Is Posted Successfully',
@@ -99,7 +105,7 @@ export const GetMyJobCOntroller = async (req, res) => {
 export const UpdateJobController = async (req, res) => {
   try {
     const { jid } = req.params
-
+    const jobdata = req.body
     let job = await jobModel.findById({ _id: jid })
     if (!job) {
       return res.json({
@@ -108,16 +114,20 @@ export const UpdateJobController = async (req, res) => {
       })
     }
 
-    job = await jobModel.findByIdAndUpdate(
-      { _id: jid },
-      { ...req.body },
-      { new: true, runValidators: true },
-    )
-    return res.json({
-      success: true,
-      message: 'Updated Successfully',
-      job,
-    })
+    job = await jobModel.findByIdAndUpdate(jid, { ...jobdata }, { new: true })
+
+    if (job) {
+      return res.json({
+        success: true,
+        message: 'Updated Successfully',
+        job,
+      })
+    } else {
+      return res.json({
+        success: false,
+        message: 'Error In Updating',
+      })
+    }
   } catch (error) {
     console.log(error)
     res.json({
@@ -148,6 +158,33 @@ export const DeleteJobController = async (req, res) => {
     res.json({
       success: false,
       message: 'Error in Deleting Job',
+    })
+  }
+}
+
+// simgle job
+export const GetSingleJob = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const job = await jobModel.findOne({ _id: id })
+    if (!job) {
+      return res.json({
+        success: false,
+        message: 'Job Not Found',
+      })
+    }
+
+    res.json({
+      success: true,
+      message: 'Job Fethced',
+      job,
+    })
+  } catch (error) {
+    console.log(error)
+    res.json({
+      success: false,
+      message: 'Error in Getting Job Details',
     })
   }
 }
